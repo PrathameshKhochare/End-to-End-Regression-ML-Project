@@ -1,16 +1,17 @@
 from src.MLRegression.constants import *
 from src.MLRegression.utils.common import read_yaml, create_directories
-from MLRegression.entity.config_entity import DataIngestionConfig
+from MLRegression.entity.config_entity import (DataIngestionConfig
+                                              ,DataValidationConfig)
 
 class ConfigurationManager:
     def __init__(
         self,
-        # config_filepath = Path("config/config.yaml"),
-        # params_filepath = Path("params.yaml"),
-        # schema_filepath = Path("schema.yaml")
-        config_filepath = CONFIG_FILE_PATH,
-        params_filepath = PARAMS_FILE_PATH,
-        schema_filepath = SCHEMA_FILE_PATH
+        config_filepath = Path("config/config.yaml"),
+        params_filepath = Path("params.yaml"),
+        schema_filepath = Path("schema.yaml")
+        # config_filepath = CONFIG_FILE_PATH,
+        # params_filepath = PARAMS_FILE_PATH,
+        # schema_filepath = SCHEMA_FILE_PATH
         ):
 
         self.config = read_yaml(config_filepath)
@@ -34,3 +35,21 @@ class ConfigurationManager:
         )
 
         return data_ingestion_config
+    
+
+#---------- Data Validation--------
+
+    def get_data_validation_config(self) -> DataValidationConfig:
+        config = self.config.data_validation
+        schema = self.schema.COLUMNS
+
+        create_directories([config.root_dir])
+
+        data_validation_config = DataValidationConfig(
+            root_dir=config.root_dir,
+            STATUS_FILE=config.STATUS_FILE,
+            unzip_data_dir = config.unzip_data_dir,
+            all_schema=schema,
+        )
+
+        return data_validation_config
