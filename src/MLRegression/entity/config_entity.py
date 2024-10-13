@@ -25,12 +25,36 @@ class DataTransformationConfig:
     
 
 # Model Training
+# @dataclass(frozen=True)
+# class ModelTrainerConfig:
+#     root_dir: Path
+#     train_data_path: Path
+#     test_data_path: Path
+#     model_name: str
+#     alpha: float
+#     l1_ratio: float
+#     target_column: str
+
+# Model training using RF
 @dataclass(frozen=True)
-class ModelTrainerConfig:
+class RandomForestModelTrainerConfig:
     root_dir: Path
     train_data_path: Path
     test_data_path: Path
     model_name: str
-    alpha: float
-    l1_ratio: float
+    max_depth: int
+    random_state: int
+    n_estimators: int
+    min_samples_split: int
     target_column: str
+
+# Model Evaluation using RF
+@dataclass(frozen=True)
+class ModelEvaluationConfig:
+    root_dir: Path
+    test_data_path: Path
+    model_path: Path
+    all_params: dict
+    metric_file_name: Path
+    target_column: str
+    #mlflow_uri: str

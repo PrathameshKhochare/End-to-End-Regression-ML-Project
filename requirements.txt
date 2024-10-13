@@ -13,4 +13,5 @@ types-PyYAML
 Flask
 Flask-Cors
 box
+openai==1.12.0
 #-e .

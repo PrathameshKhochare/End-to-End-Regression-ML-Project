@@ -3,7 +3,9 @@ from src.MLRegression.utils.common import read_yaml, create_directories
 from MLRegression.entity.config_entity import (DataIngestionConfig
                                               ,DataValidationConfig
                                               ,DataTransformationConfig
-                                              ,ModelTrainerConfig)
+                                              ,#ModelTrainerConfig
+                                              RandomForestModelTrainerConfig
+                                              ,ModelEvaluationConfig)
 
 class ConfigurationManager:
     def __init__(
@@ -73,22 +75,67 @@ class ConfigurationManager:
 
 #-------------- Model Training --------------------
 
-    def get_model_trainer_config(self) -> ModelTrainerConfig:
+    # def get_model_trainer_config(self) -> ModelTrainerConfig:
+    #     config = self.config.model_trainer
+    #     params = self.params.ElasticNet
+    #     schema =  self.schema.TARGET_COLUMN
+
+    #     create_directories([config.root_dir])
+
+    #     model_trainer_config = ModelTrainerConfig(
+    #         root_dir=config.root_dir,
+    #         train_data_path = config.train_data_path,
+    #         test_data_path = config.test_data_path,
+    #         model_name = config.model_name,
+    #         alpha = params.alpha,
+    #         l1_ratio = params.l1_ratio,
+    #         target_column = schema.name
+            
+    #     )
+
+    #     return model_trainer_config
+
+#-------------- Model Training using RF--------------------
+    def get_model_trainer_config(self) -> RandomForestModelTrainerConfig:
         config = self.config.model_trainer
-        params = self.params.ElasticNet
+        params = self.params.RandomForest
         schema =  self.schema.TARGET_COLUMN
 
         create_directories([config.root_dir])
 
-        model_trainer_config = ModelTrainerConfig(
+        model_trainer_config = RandomForestModelTrainerConfig(
             root_dir=config.root_dir,
             train_data_path = config.train_data_path,
             test_data_path = config.test_data_path,
             model_name = config.model_name,
-            alpha = params.alpha,
-            l1_ratio = params.l1_ratio,
+            max_depth = params.max_depth,
+            random_state = params.random_state,
+            n_estimators = params.n_estimators,
+            min_samples_split = params.min_samples_split,
             target_column = schema.name
             
         )
 
         return model_trainer_config
+    
+
+#--------------Model Evaluation using RF-------------
+    def get_model_evaluation_config(self) -> ModelEvaluationConfig:
+        config = self.config.model_evaluation
+        params = self.params.RandomForest
+        schema =  self.schema.TARGET_COLUMN
+
+        create_directories([config.root_dir])
+
+        model_evaluation_config = ModelEvaluationConfig(
+            root_dir=config.root_dir,
+            test_data_path=config.test_data_path,
+            model_path = Path("artifacts/model_trainer/randomForest.joblib"),
+            all_params=params,
+            metric_file_name = Path("artifacts/model_evaluation/rf-metrics.json"),
+            target_column = schema.name,
+            #mlflow_uri="https://dagshub.com/entbappy/End-to-end-ML-Project-with-DVC-MLflow.mlflow",
+           
+        )
+
+        return model_evaluation_config
